@@ -1,0 +1,140 @@
+# JobScout configuration.
+# Edit this file to change behavior without touching any R code.
+
+paths:
+  # Folder where JobScout.xlsx, backups/, and the SQLite database live.
+  # Kept separate from the project folder on purpose.
+  workbook_dir: "C:/JobScout"
+  workbook_name: "JobScout.xlsx"
+  database_name: "jobscout.sqlite"
+  backup_subdir: "backups"
+  backup_keep: 4
+  log_subdir: "logs"
+
+timezone: "America/Chicago"
+
+usajobs:
+  # USAJOBS requires a User-Agent header that is your email address.
+  # The Authorization-Key itself is read from USAJOBS_API_KEY in .Renviron,
+  # never stored here.
+  user_agent_email: "your_email@example.com"
+  base_url: "https://data.usajobs.gov/api/search"
+  results_per_page: 500
+  # Occupational series to request. Sent as the JobCategoryCode param
+  # (semicolon-delimited) -- the official docs call this "job category",
+  # not "series", but it's the same 4-digit occupational series codes.
+  # Defaults: 2210 IT, 0132 Intelligence, 0080 Security Admin, 1550 Computer
+  # Science, 1560 Data Science, 0301 Misc Admin/Program, 0343 Mgmt/Program Analysis.
+  series: ["2210", "0132", "0080", "1550", "1560", "0301", "0343"]
+  # Hiring paths considered "entry level" on USAJOBS, sent as the HiringPath
+  # param (semicolon-delimited). The API only recognizes "student" and
+  # "graduates" -- there is no separate "pathways" value, since Pathways
+  # internships/recent-grad programs are posted under these two paths.
+  # "Pathways" postings are still caught by the Internships category keyword
+  # match in classify.R.
+  hiring_paths: ["student", "graduates"]
+  # A posting also counts as entry-level if any grade in its low-high range
+  # falls within this inclusive window (e.g. GS-07-11 counts because 07-09 overlaps).
+  grade_low: "04"
+  grade_high: "09"
+
+locations:
+  # Any of these substrings appearing in a job's state/location text counts
+  # as "in Texas". Remote-US roles are kept in their category sheet (labeled
+  # Remote) rather than being treated as out-of-state.
+  texas_terms: ["TX", "Texas"]
+  remote_terms: ["remote", "work from home", "telework", "virtual"]
+
+categories:
+  # Priority order used to assign each job to exactly one sheet. A job that
+  # also matches lower-priority categories gets them listed in "Also Matches".
+  priority: ["Government", "Internships", "Cyber", "IT", "Sales"]
+  keywords:
+    Internships:
+      - "intern"
+      - "internship"
+      - "co-op"
+      - "summer 2027"
+      - "student"
+      - "pathways"
+    Cyber:
+      - "cybersecurity"
+      - "security analyst"
+      - "SOC"
+      - "threat intelligence"
+      - "OT security"
+      - "information security"
+      - "incident response"
+    IT:
+      - "IT support"
+      - "technical support"
+      - "help desk"
+      - "systems analyst"
+      - "data analyst"
+      - "business analyst"
+      - "data science"
+      - "customer success"
+    Sales:
+      - "sales"
+      - "delivery consultant"
+      - "business development"
+      - "account representative"
+      - "customer success"
+  # Matched against the JOB TITLE only (whole word, case-insensitive).
+  exclude_title:
+    - "senior"
+    - "lead"
+    - "principal"
+    - "manager"
+    - "director"
+  # Matched against the FULL TEXT (title + description), case-insensitive.
+  exclude_text:
+    - "5+ years"
+    - "3+ years"
+    - "top secret"
+    - "ts-sci"
+    - "ts/sci"
+
+careers:
+  # Stage 2: company career-page scraper targets. Each entry names the board
+  # platform so careers.R knows which parser to use.
+  companies:
+    - name: "IBM"
+      platform: "unsupported"
+    - name: "Oracle"
+      platform: "unsupported"
+    - name: "Accenture"
+      platform: "unsupported"
+    - name: "Silicon Labs"
+      platform: "greenhouse"
+      board_token: "siliconlabs"
+    - name: "Crowe"
+      platform: "workday"
+      tenant: "crowe"
+      site: "CroweCareers"
+    - name: "Vanguard"
+      platform: "workday"
+      tenant: "vanguard"
+      site: "Vanguard_Careers"
+    - name: "John Deere"
+      platform: "workday"
+      tenant: "johndeere"
+      site: "JohnDeereCareers"
+    - name: "PROS"
+      platform: "greenhouse"
+      board_token: "pros"
+    - name: "Noble Corporation"
+      platform: "unsupported"
+  request_delay_seconds: 5
+  user_agent: "JobScoutBot/1.0 (personal job search tool; contact: your_email@example.com)"
+
+email:
+  enabled: true
+  include_summary_in_body: true
+  to: "your_email@gmail.com"
+  from_name: "JobScout"
+  subject_template: "JobScout Weekly: {n} new postings"
+
+demo:
+  workbook_dir: "demo_output"
+  database_name: "jobscout_demo.sqlite"

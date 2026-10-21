@@ -1,0 +1,10 @@
+# Copy this file to .Renviron (same folder) and fill in real values.
+# .Renviron is listed in .gitignore and must never be committed.
+
+# USAJOBS API key -- request one free at https://developer.usajobs.gov/apirequest/
+USAJOBS_API_KEY=paste-your-usajobs-api-key-here
+
+# Gmail App Password (NOT your normal Gmail password) -- requires 2-Step
+# Verification turned on, then create one at https://myaccount.google.com/apppasswords
+GMAIL_USER=your_email@gmail.com
+GMAIL_APP_PASSWORD=paste-your-16-character-app-password-here

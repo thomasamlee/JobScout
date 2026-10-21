@@ -1,0 +1,23 @@
+# Secrets -- never commit
+.Renviron
+
+# renv
+renv/library/
+renv/python/
+renv/staging/
+renv/sandbox/
+
+# R session/build artifacts
+.Rproj.user/
+.Rhistory
+.RData
+.Ruserdata
+*.Rproj.user
+
+# JobScout's own output, if it ever lands inside the project folder
+demo_output/
+*.log
+
+# OS cruft
+.DS_Store
+Thumbs.db
